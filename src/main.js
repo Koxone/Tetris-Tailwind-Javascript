@@ -57,6 +57,18 @@ function fixPieceOnBoard() {
   });
 }
 
+function rotateMatrix(matrix) {
+  const size = matrix.length;
+  const rotated = Array.from({ length: size }, () => Array(size).fill(0));
+
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((cell, columnIndex) => {
+      rotated[columnIndex][size - 1 - rowIndex] = cell;
+    });
+  });
+  return rotated;
+}
+
 // Generates and renders the empty board at the start of the game
 function renderEmptyBoard() {
   const board = document.getElementById("board");
@@ -224,19 +236,32 @@ function userMovement() {
 
         break;
 
-      // case "ArrowUp":
-      //   const newY = currentPosition.y + 1;
-      //   const outDown = calculatePieceOutOfBounds(
-      //     currentPiece.shape,
-      //     newY,
-      //     20,
-      //     "y"
-      //   );
+      case "ArrowUp":
+        const rotatedShape = rotateMatrix(currentPiece.shape);
+        const outOfBoundsX = calculatePieceOutOfBounds(
+          rotatedShape,
+          currentPosition.x,
+          10,
+          "x"
+        );
+        const outOfBoundsY = calculatePieceOutOfBounds(
+          rotatedShape,
+          currentPosition.y,
+          20,
+          "y"
+        );
 
-      //   const collisionDown = collisionAxis(currentPosition.x, newY);
-      //   movePieceIfValid("y", newY, outDown, collisionDown);
+        const collision = checkCollisionWithBoard(rotatedShape, {
+          x: currentPosition.x,
+          y: currentPosition.y,
+        });
 
-      //   break;
+        if (!outOfBoundsX && !outOfBoundsY && !collision) {
+          currentPiece.shape = rotatedShape;
+          renderBoard();
+        }
+
+        break;
     }
   });
 }
