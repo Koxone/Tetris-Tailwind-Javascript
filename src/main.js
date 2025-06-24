@@ -12,6 +12,7 @@ let currentPosition = { x: 3, y: 0 };
 let pieceBlocked = false;
 let userLoose = false;
 let userWon = false;
+let gameStarted = false;
 let currentPiece = randomPiece();
 const board = document.getElementById("board");
 const modal = document.getElementById("modal");
@@ -89,6 +90,8 @@ function randomPiece() {
 
 // Automatically moves the piece down every second: Handles gravity and piece locking
 function startAutoFall() {
+  if (!gameStarted) return;
+  
   const fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
 
