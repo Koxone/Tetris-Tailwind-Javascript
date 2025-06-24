@@ -192,81 +192,110 @@ function startAutoFall() {
 function userMovement() {
   window.addEventListener("keydown", (value) => {
     if (pieceBlocked) return;
+
     switch (value.key) {
       case "ArrowLeft":
-        const newXLeft = currentPosition.x - 1;
-
-        const outLeft = calculatePieceOutOfBounds(
-          currentPiece.shape,
-          newXLeft,
-          10,
-          "x"
-        );
-
-        const collisionLeft = collisionAxis(newXLeft, currentPosition.y);
-
-        movePieceIfValid("x", newXLeft, outLeft, collisionLeft);
+        handleMove(-1, 0);
         break;
-
       case "ArrowRight":
-        const newXRight = currentPosition.x + 1;
-
-        const outRight = calculatePieceOutOfBounds(
-          currentPiece.shape,
-          newXRight,
-          10,
-          "x"
-        );
-
-        const collisionRight = collisionAxis(newXRight, currentPosition.y);
-        movePieceIfValid("x", newXRight, outRight, collisionRight);
-
+        handleMove(1, 0);
         break;
-
       case "ArrowDown":
-        const newY = currentPosition.y + 1;
-        const outDown = calculatePieceOutOfBounds(
-          currentPiece.shape,
-          newY,
-          20,
-          "y"
-        );
-
-        const collisionDown = collisionAxis(currentPosition.x, newY);
-        movePieceIfValid("y", newY, outDown, collisionDown);
-
+        handleMove(0, 1);
         break;
-
       case "ArrowUp":
-        const rotatedShape = rotateMatrix(currentPiece.shape);
-        const outOfBoundsX = calculatePieceOutOfBounds(
-          rotatedShape,
-          currentPosition.x,
-          10,
-          "x"
-        );
-        const outOfBoundsY = calculatePieceOutOfBounds(
-          rotatedShape,
-          currentPosition.y,
-          20,
-          "y"
-        );
-
-        const collision = checkCollisionWithBoard(rotatedShape, {
-          x: currentPosition.x,
-          y: currentPosition.y,
-        });
-
-        if (!outOfBoundsX && !outOfBoundsY && !collision) {
-          currentPiece.shape = rotatedShape;
-          renderBoard();
-        }
-
+        handleRotate();
         break;
     }
   });
+
+  // Gesture support for mobile
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  window.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  });
+
+  window.addEventListener("touchend", (e) => {
+    if (pieceBlocked) return;
+
+    const touch = e.changedTouches[0];
+    const dx = touch.clientX - touchStartX;
+    const dy = touch.clientY - touchStartY;
+
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    // Horizontal swipe
+    if (absX > absY && absX > 30) {
+      if (dx > 0) {
+        handleMove(1, 0); // Swipe right
+      } else {
+        handleMove(-1, 0); // Swipe left
+      }
+    }
+
+    // Vertical swipe
+    if (absY > absX && absY > 30) {
+      if (dy > 0) {
+        handleMove(0, 1); // Swipe down
+      } else {
+        handleRotate(); // Swipe up
+      }
+    }
+  });
+
+  function handleMove(deltaX, deltaY) {
+    const newX = currentPosition.x + deltaX;
+    const newY = currentPosition.y + deltaY;
+
+    const outOfBounds = calculatePieceOutOfBounds(
+      currentPiece.shape,
+      deltaX !== 0 ? newX : currentPosition.x,
+      deltaX !== 0 ? 10 : 20,
+      deltaX !== 0 ? "x" : "y"
+    );
+
+    const collision = collisionAxis(
+      deltaX !== 0 ? newX : currentPosition.x,
+      deltaY !== 0 ? newY : currentPosition.y
+    );
+
+    movePieceIfValid(deltaX !== 0 ? "x" : "y", deltaX !== 0 ? newX : newY, outOfBounds, collision);
+  }
+
+  function handleRotate() {
+    const rotatedShape = rotateMatrix(currentPiece.shape);
+
+    const outOfBoundsX = calculatePieceOutOfBounds(
+      rotatedShape,
+      currentPosition.x,
+      10,
+      "x"
+    );
+    const outOfBoundsY = calculatePieceOutOfBounds(
+      rotatedShape,
+      currentPosition.y,
+      20,
+      "y"
+    );
+    const collision = checkCollisionWithBoard(rotatedShape, {
+      x: currentPosition.x,
+      y: currentPosition.y,
+    });
+
+    if (!outOfBoundsX && !outOfBoundsY && !collision) {
+      currentPiece.shape = rotatedShape;
+      renderBoard();
+    }
+  }
 }
+
 userMovement();
+
 
 function checkCollisionWithBoard(pieceShape, position) {
   let collision = false;
