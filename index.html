@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,17 +12,34 @@
     <title>Tetris</title>
   </head>
   <body
-    class="flex min-h-screen items-center justify-center bg-gray-900 p-4 overflow-hidden"
+    class="flex min-h-screen items-center justify-center overflow-hidden bg-gray-900 p-4"
   >
     <main
-      class="flex w-full relative max-w-[400px] h-[calc(100vh-4rem)] min-h-[500px] rounded-xl bg-gradient-to-br from-gray-400 via-gray-400 to-gray-700 p-2 shadow-2xl sm:h-[800px] sm:w-[400px] sm:p-6"
+      id="test"
+      class="relative flex h-[calc(100vh-4rem)] min-h-[500px] w-full max-w-[400px] rounded-xl bg-gradient-to-br from-gray-400 via-gray-400 to-gray-700 p-2 shadow-2xl sm:h-[800px] sm:w-[400px] sm:p-6"
     >
       <div
-        class="text-white bg-neutral-800 rounded-2xl p-4 w-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border border-white aspect-square flex items-center justify-center"
+        id="modal"
+        class="absolute top-1/2 left-1/2 z-50 hidden aspect-video w-[280px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-between rounded-2xl border 
+        border-white bg-neutral-800 p-4 text-white"
       >
-        Koxone
+        <p class="text-4xl font-semibold">Game Over</p>
+        <div id="buttonContainer" class="flex w-full justify-center">
+          <button
+            id="negative"
+            class="relative hidden cursor-pointer items-center justify-center rounded-lg border-2 border-orange-300/60 bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 p-3 shadow-[0_0_0px_rgba(251,146,60,0.4),0_0_40px_rgba(239,68,68,0.3)] backdrop-blur-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/10 after:pointer-events-none after:absolute after:inset-[1px] after:rounded-md after:bg-gradient-to-br after:from-white/10 after:to-transparent"
+          >
+            Restart
+          </button>
+          <button
+            id="positive"
+            class="relative flex cursor-pointer items-center justify-center gap-3 rounded-lg border-2 border-lime-300/60 bg-gradient-to-br from-lime-400 via-green-500 to-emerald-500 p-3 shadow-[0_0_0px_rgba(163,230,53,0.4),0_0_40px_rgba(34,197,94,0.3)] backdrop-blur-sm before:pointer-events-none before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-br before:from-white/20 before:via-transparent before:to-black/10 after:pointer-events-none after:absolute after:inset-[1px] after:rounded-md after:bg-gradient-to-br after:from-white/10 after:to-transparent"
+          >
+            Play Again
+          </button>
+        </div>
       </div>
-      <div class="w-full h-full rounded-md bg-black p-[2px] sm:p-[4px]">
+      <div class="h-full w-full rounded-md bg-black p-[2px] sm:p-[4px]">
         <div
           id="board"
           class="grid h-full w-full grid-cols-10 grid-rows-20 gap-[1px]"

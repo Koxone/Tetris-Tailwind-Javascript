@@ -6,17 +6,22 @@ let boardState = Array.from({ length: 20 }, () =>
   Array.from({ length: 10 }, () => ({
     value: 0,
     color: null,
-  }))
+  })),
 );
 let currentPosition = { x: 3, y: 0 };
 let pieceBlocked = false;
-let gameOver = false;
+let userLoose = false;
+let userWon = false;
 let currentPiece = randomPiece();
-// startAutoFall();
+const board = document.getElementById("board");
+const modal = document.getElementById("modal");
+const positiveButton = document.getElementById("positive");
+const negativeButton = document.getElementById("negative");
+const buttonContainer = document.getElementById("buttonContainer");
+startAutoFall();
 
 // Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
-  const board = document.getElementById("board");
   board.innerHTML = "";
 
   Array.from({ length: 20 }).forEach((_, row) => {
@@ -34,7 +39,6 @@ renderEmptyBoard();
 
 // Renders the entire board and the current falling piece: Paints fixed and active cells
 function renderBoard() {
-  const board = document.getElementById("board");
   board.innerHTML = "";
 
   Array.from({ length: 20 }).forEach((_, row) => {
@@ -65,8 +69,8 @@ function renderBoard() {
       const cellColor = paintThisCell
         ? color
         : (row + column) % 2 === 0
-        ? "bg-neutral-800"
-        : "bg-neutral-900";
+          ? "bg-neutral-800"
+          : "bg-neutral-900";
 
       div.className = `h-full w-full ${cellColor}`;
       board.appendChild(div);
@@ -97,7 +101,7 @@ function startAutoFall() {
       currentPiece.shape,
       newY,
       20,
-      "y"
+      "y",
     );
 
     if (outAutoFall || collisionWithBoard) {
@@ -109,16 +113,18 @@ function startAutoFall() {
       currentPosition = { x: 3, y: 0 };
       const collisionAtSpawn = checkCollisionWithBoard(
         currentPiece.shape,
-        currentPosition
+        currentPosition,
       );
 
       if (collisionAtSpawn) {
-        gameOver = true;
-        alert("Game Over");
+        userLoose = true;
+        playAgain();
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
 
-        setTimeout(() => {
-          resetGame();
-        }, 300);
+        if (userWon) {
+          positiveButton.textContent = "Next Round";
+        }
         return;
       }
 
@@ -137,7 +143,7 @@ function startAutoFall() {
 // Handles player input to move the piece left, right, or down: Processes keyboard controls
 function userMovement() {
   window.addEventListener("keydown", (value) => {
-    if (pieceBlocked || gameOver) return;
+    if (pieceBlocked || userLoose || userWon) return;
     switch (value.key) {
       case "ArrowLeft":
         const newXLeft = currentPosition.x - 1;
@@ -146,7 +152,7 @@ function userMovement() {
           currentPiece.shape,
           newXLeft,
           10,
-          "x"
+          "x",
         );
 
         const collisionLeft = collisionAxis(newXLeft, currentPosition.y);
@@ -161,7 +167,7 @@ function userMovement() {
           currentPiece.shape,
           newXRight,
           10,
-          "x"
+          "x",
         );
 
         const collisionRight = collisionAxis(newXRight, currentPosition.y);
@@ -175,7 +181,7 @@ function userMovement() {
           currentPiece.shape,
           newY,
           20,
-          "y"
+          "y",
         );
 
         const collisionDown = collisionAxis(currentPosition.x, newY);
@@ -189,13 +195,13 @@ function userMovement() {
           rotatedShape,
           currentPosition.x,
           10,
-          "x"
+          "x",
         );
         const outOfBoundsY = calculatePieceOutOfBounds(
           rotatedShape,
           currentPosition.y,
           20,
-          "y"
+          "y",
         );
 
         const collision = checkCollisionWithBoard(rotatedShape, {
@@ -260,12 +266,13 @@ function resetGame() {
     Array.from({ length: 10 }, () => ({
       value: 0,
       color: null,
-    }))
+    })),
   );
   currentPosition = { x: 3, y: 0 };
   currentPiece = randomPiece();
   pieceBlocked = false;
-  gameOver = false;
+  userLoose = false;
+  userWon = false;
   renderBoard();
   startAutoFall();
 }
@@ -324,4 +331,26 @@ function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
   });
 
   return outOfBounds;
+}
+
+function playAgain() {
+  if (!userLoose && !userWon) return;
+
+  function handleModalClick(event) {
+    const target = event.target;
+
+    if (target.id === "positive") {
+      modal.classList.remove("flex");
+      modal.classList.add("hidden");
+      resetGame();
+      modal.removeEventListener("click", handleModalClick);
+      return;
+    } else if (target.id === "negative") {
+      modal.classList.remove("flex");
+      modal.classList.add("hidden");
+      modal.removeEventListener("click", handleModalClick);
+    }
+  }
+
+  modal.addEventListener("click", handleModalClick);
 }
