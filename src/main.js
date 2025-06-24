@@ -2,6 +2,47 @@ import { TETROMINOES } from "./utils/tetrominoes";
 
 let pieceBlocked = false;
 
+function calculatePieceOutOfBoundsX(pieceShape, newX, boardWidth) {
+  let outOfBounds = false;
+
+  pieceShape.forEach((row, rowIndex) => {
+    row.forEach((cell, index) => {
+      if (cell === 1) {
+        const xGlobal = newX + index;
+        if (xGlobal < 0 || xGlobal >= boardWidth) {
+          outOfBounds = true;
+        }
+      }
+    });
+  });
+
+  return outOfBounds;
+}
+
+function calculatePieceOutOfBoundsY(pieceShape, newY, boardHeight) {
+  let outOfBounds = false;
+
+  pieceShape.forEach((row, rowIndex) => {
+    row.forEach((cell) => {
+      if (cell === 1) {
+        const yGlobal = newY + rowIndex;
+        if (yGlobal >= boardHeight) {
+          outOfBounds = true;
+        }
+      }
+    });
+  });
+
+  return outOfBounds;
+}
+
+function movePieceIfValid(axis, newValue, isOutOfBounds) {
+  if (!isOutOfBounds) {
+    currentPosition[axis] = newValue;
+    renderBoard();
+  }
+}
+
 // 1-> Create Board inner cells
 function renderEmptyBoard() {
   const board = document.getElementById("board");
@@ -81,18 +122,7 @@ renderBoard();
 function startAutoFall() {
   const fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
-    let outOfBoard = false;
-
-    currentPiece.shape.forEach((row, rowIndex) => {
-      row.forEach((cell) => {
-        if (cell === 1) {
-          const yGlobal = currentPosition.y + rowIndex + 1;
-          if (yGlobal >= 20) {
-            outOfBoard = true;
-          }
-        }
-      });
-    });
+    const outOfBoard = calculatePieceOutOfBoundsY(currentPiece.shape, newY, 20);
 
     if (outOfBoard) {
       pieceBlocked = true;
@@ -112,65 +142,36 @@ function userMovement() {
     switch (value.key) {
       case "ArrowLeft":
         const newXLeft = currentPosition.x - 1;
-        let outOfBoardLeft = false;
 
-        currentPiece.shape.forEach((row, rowIndex) => {
-          row.forEach((cell, columnIndex) => {
-            if (cell === 1) {
-              const xGlobal = newXLeft + columnIndex;
-              if (xGlobal < 0) {
-                outOfBoardLeft = true;
-              }
-            }
-          });
-        });
+        const outOfBoardLeft = calculatePieceOutOfBoundsX(
+          currentPiece.shape,
+          newXLeft,
+          10
+        );
 
-        if (!outOfBoardLeft) {
-          currentPosition.x = newXLeft;
-          renderBoard();
-        }
+        movePieceIfValid("x", newXLeft, outOfBoardLeft);
         break;
 
       case "ArrowRight":
         const newXRight = currentPosition.x + 1;
-        let outOfBoardRight = false;
+        const outOfBoardRight = calculatePieceOutOfBoundsX(
+          currentPiece.shape,
+          newXRight,
+          10
+        );
 
-        currentPiece.shape.forEach((row, rowIndex) => {
-          row.forEach((cell, columnIndex) => {
-            if (cell === 1) {
-              const xGlobal = newXRight + columnIndex;
-              if (xGlobal >= 10) {
-                outOfBoardRight = true;
-              }
-            }
-          });
-        });
-
-        if (!outOfBoardRight) {
-          currentPosition.x = newXRight;
-          renderBoard();
-        }
+        movePieceIfValid("x", newXRight, outOfBoardRight);
         break;
 
       case "ArrowDown":
         const newY = currentPosition.y + 1;
-        let outOfBoardDown = false;
+        const outOfBoardDown = calculatePieceOutOfBoundsY(
+          currentPiece.shape,
+          newY,
+          20
+        );
 
-        currentPiece.shape.forEach((row, rowIndex) => {
-          row.forEach((cell) => {
-            if (cell === 1) {
-              const xGlobal = newY + rowIndex + 1;
-              if (xGlobal >= 20) {
-                outOfBoardDown = true;
-              }
-            }
-          });
-        });
-
-        if (!outOfBoardDown) {
-          currentPosition.y = newY;
-          renderBoard();
-        }
+        movePieceIfValid("y", newY, outOfBoardDown);
         break;
     }
   });
