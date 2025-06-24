@@ -10,6 +10,7 @@ let boardState = Array.from({ length: 20 }, () =>
 );
 let currentPosition = { x: 3, y: 0 };
 let pieceBlocked = false;
+let gameOver = false;
 let currentPiece = randomPiece();
 startAutoFall();
 
@@ -106,6 +107,20 @@ function startAutoFall() {
 
       currentPiece = randomPiece();
       currentPosition = { x: 3, y: 0 };
+      const collisionAtSpawn = checkCollisionWithBoard(
+        currentPiece.shape,
+        currentPosition
+      );
+
+      if (collisionAtSpawn) {
+        setTimeout(() => {
+          gameOver = true;
+          alert("Game Over");
+          resetGame();
+          return;
+        }, 300);
+      }
+
       pieceBlocked = false;
       renderBoard();
       startAutoFall();
@@ -121,7 +136,7 @@ function startAutoFall() {
 // Handles player input to move the piece left, right, or down: Processes keyboard controls
 function userMovement() {
   window.addEventListener("keydown", (value) => {
-    if (pieceBlocked) return;
+    if (pieceBlocked || gameOver) return;
     switch (value.key) {
       case "ArrowLeft":
         const newXLeft = currentPosition.x - 1;
@@ -219,7 +234,7 @@ function rotateMatrix(matrix) {
   return rotated;
 }
 
-//Fixes pieces to the board once they get to the end of the board: Locks the piece in place
+// Fixes pieces to the board once they get to the end of the board: Locks the piece in place
 function fixPieceOnBoard() {
   currentPiece.shape.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
@@ -236,6 +251,22 @@ function fixPieceOnBoard() {
       }
     });
   });
+}
+
+// Resets Board and Game State
+function resetGame() {
+  boardState = Array.from({ length: 20 }, () =>
+    Array.from({ length: 10 }, () => ({
+      value: 0,
+      color: null,
+    }))
+  );
+  currentPosition = { x: 3, y: 0 };
+  currentPiece = randomPiece();
+  pieceBlocked = false;
+  gameOver = false;
+  renderBoard();
+  startAutoFall();
 }
 
 // Prevents collisions to the board axis walls: Checks for collisions on movement
