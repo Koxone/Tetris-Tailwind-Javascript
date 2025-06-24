@@ -113,12 +113,13 @@ function startAutoFall() {
       );
 
       if (collisionAtSpawn) {
+        gameOver = true;
+        alert("Game Over");
+
         setTimeout(() => {
-          gameOver = true;
-          alert("Game Over");
           resetGame();
-          return;
         }, 300);
+        return;
       }
 
       pieceBlocked = false;
