@@ -1,7 +1,7 @@
 import { TETROMINOES } from "./utils/tetrominoes";
 import "/style.css";
 
-// Global Initial States
+// Global Initial States: Initializes the board, piece position, and state
 let boardState = Array.from({ length: 20 }, () =>
   Array.from({ length: 10 }, () => ({
     value: 0,
@@ -13,7 +13,7 @@ let pieceBlocked = false;
 let currentPiece = randomPiece();
 startAutoFall();
 
-// Generates and renders the empty board at the start of the game
+// Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
   const board = document.getElementById("board");
   board.innerHTML = "";
@@ -31,7 +31,7 @@ function renderEmptyBoard() {
 }
 renderEmptyBoard();
 
-// Renders the entire board and the current falling piece
+// Renders the entire board and the current falling piece: Paints fixed and active cells
 function renderBoard() {
   const board = document.getElementById("board");
   board.innerHTML = "";
@@ -73,7 +73,7 @@ function renderBoard() {
   });
 }
 
-// Returns a random piece from the TETROMINOES list
+// Returns a random piece from the TETROMINOES list: Selects a random tetromino
 function randomPiece() {
   const pieces = Object.keys(TETROMINOES);
   const randomIndex = Math.floor(Math.random() * pieces.length);
@@ -82,7 +82,7 @@ function randomPiece() {
   return piece;
 }
 
-// Automatically moves the piece down every second
+// Automatically moves the piece down every second: Handles gravity and piece locking
 function startAutoFall() {
   const fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
@@ -118,7 +118,7 @@ function startAutoFall() {
   }, 1000);
 }
 
-// Handles player input to move the piece left, right, or down
+// Handles player input to move the piece left, right, or down: Processes keyboard controls
 function userMovement() {
   window.addEventListener("keydown", (value) => {
     if (pieceBlocked) return;
@@ -198,7 +198,7 @@ function userMovement() {
 }
 userMovement();
 
-// Moves the piece if it’s within bounds and updates the board
+// Moves the piece if it’s within bounds and updates the board: Updates position if valid
 function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
   if (!isOutOfBounds && !isCollision) {
     currentPosition[axis] = newValue;
@@ -206,7 +206,7 @@ function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
   }
 }
 
-// Rotates Pieces Clockwise
+// Rotates Pieces Clockwise: Rotates the matrix for piece rotation
 function rotateMatrix(matrix) {
   const size = matrix.length;
   const rotated = Array.from({ length: size }, () => Array(size).fill(0));
@@ -219,7 +219,7 @@ function rotateMatrix(matrix) {
   return rotated;
 }
 
-//Fixes pieces to the board once they get to the end of the board
+//Fixes pieces to the board once they get to the end of the board: Locks the piece in place
 function fixPieceOnBoard() {
   currentPiece.shape.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
@@ -238,7 +238,7 @@ function fixPieceOnBoard() {
   });
 }
 
-// Prevents collisions to the board axis walls
+// Prevents collisions to the board axis walls: Checks for collisions on movement
 function collisionAxis(xAxis, yAxis) {
   const collision = checkCollisionWithBoard(currentPiece.shape, {
     x: xAxis,
@@ -248,7 +248,7 @@ function collisionAxis(xAxis, yAxis) {
 }
 renderBoard();
 
-// Check collitions
+// Check collitions: Detects overlap between falling piece and fixed blocks
 function checkCollisionWithBoard(pieceShape, position) {
   let collision = false;
 
@@ -274,7 +274,7 @@ function checkCollisionWithBoard(pieceShape, position) {
   return collision;
 }
 
-// Checks if the piece goes out of bounds (horizontal or vertical)
+// Checks if the piece goes out of bounds (horizontal or vertical): Validates piece position
 function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
   let outOfBounds = false;
 
