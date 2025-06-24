@@ -1,4 +1,5 @@
 import { TETROMINOES } from "./utils/tetrominoes";
+import "/style.css";
 
 // Tracks whether the current piece has reached the bottom and can’t move anymore
 let pieceBlocked = false;
