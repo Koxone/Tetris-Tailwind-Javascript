@@ -1,74 +1,17 @@
 import { TETROMINOES } from "./utils/tetrominoes";
 import "/style.css";
 
-// Tracks whether the current piece has reached the bottom and can’t move anymore
+// Global Initial States
+let boardState = Array.from({ length: 20 }, () =>
+  Array.from({ length: 10 }, () => ({
+    value: 0,
+    color: null,
+  }))
+);
+let currentPosition = { x: 3, y: 0 };
 let pieceBlocked = false;
-
-// Checks if the piece goes out of bounds (horizontal or vertical)
-function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
-  let outOfBounds = false;
-
-  pieceShape.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (cell === 1) {
-        const globalCoord =
-          axis === "x" ? newCoord + colIndex : newCoord + rowIndex;
-
-        if (globalCoord < 0 || globalCoord >= boardLimit) {
-          outOfBounds = true;
-        }
-      }
-    });
-  });
-
-  return outOfBounds;
-}
-
-// Moves the piece if it’s within bounds and updates the board
-function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
-  if (!isOutOfBounds && !isCollision) {
-    currentPosition[axis] = newValue;
-    renderBoard();
-  }
-}
-
-function collisionAxis(xAxis, yAxis) {
-  const collision = checkCollisionWithBoard(currentPiece.shape, {
-    x: xAxis,
-    y: yAxis,
-  });
-  return collision;
-}
-
-function fixPieceOnBoard() {
-  currentPiece.shape.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (cell === 1) {
-        const y = currentPosition.y + rowIndex;
-        const x = currentPosition.x + colIndex;
-
-        if (y >= 0 && y < 20 && x >= 0 && x < 10) {
-          boardState[y][x] = {
-            value: 1,
-            color: currentPiece.color,
-          };
-        }
-      }
-    });
-  });
-}
-
-function rotateMatrix(matrix) {
-  const size = matrix.length;
-  const rotated = Array.from({ length: size }, () => Array(size).fill(0));
-
-  matrix.forEach((row, rowIndex) => {
-    row.forEach((cell, columnIndex) => {
-      rotated[columnIndex][size - 1 - rowIndex] = cell;
-    });
-  });
-  return rotated;
-}
+let currentPiece = randomPiece();
+startAutoFall();
 
 // Generates and renders the empty board at the start of the game
 function renderEmptyBoard() {
@@ -87,26 +30,6 @@ function renderEmptyBoard() {
   });
 }
 renderEmptyBoard();
-
-// Returns a random piece from the TETROMINOES list
-function randomPiece() {
-  const pieces = Object.keys(TETROMINOES);
-  const randomIndex = Math.floor(Math.random() * pieces.length);
-  const randomKey = pieces[randomIndex];
-  const piece = TETROMINOES[randomKey];
-  return piece;
-}
-
-let boardState = Array.from({ length: 20 }, () =>
-  Array.from({ length: 10 }, () => ({
-    value: 0,
-    color: null,
-  }))
-);
-
-let currentPosition = { x: 3, y: 0 };
-let currentPiece = randomPiece();
-startAutoFall();
 
 // Renders the entire board and the current falling piece
 function renderBoard() {
@@ -150,7 +73,14 @@ function renderBoard() {
   });
 }
 
-renderBoard();
+// Returns a random piece from the TETROMINOES list
+function randomPiece() {
+  const pieces = Object.keys(TETROMINOES);
+  const randomIndex = Math.floor(Math.random() * pieces.length);
+  const randomKey = pieces[randomIndex];
+  const piece = TETROMINOES[randomKey];
+  return piece;
+}
 
 // Automatically moves the piece down every second
 function startAutoFall() {
@@ -268,6 +198,57 @@ function userMovement() {
 }
 userMovement();
 
+// Moves the piece if it’s within bounds and updates the board
+function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
+  if (!isOutOfBounds && !isCollision) {
+    currentPosition[axis] = newValue;
+    renderBoard();
+  }
+}
+
+// Rotates Pieces Clockwise
+function rotateMatrix(matrix) {
+  const size = matrix.length;
+  const rotated = Array.from({ length: size }, () => Array(size).fill(0));
+
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((cell, columnIndex) => {
+      rotated[columnIndex][size - 1 - rowIndex] = cell;
+    });
+  });
+  return rotated;
+}
+
+//Fixes pieces to the board once they get to the end of the board
+function fixPieceOnBoard() {
+  currentPiece.shape.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell === 1) {
+        const y = currentPosition.y + rowIndex;
+        const x = currentPosition.x + colIndex;
+
+        if (y >= 0 && y < 20 && x >= 0 && x < 10) {
+          boardState[y][x] = {
+            value: 1,
+            color: currentPiece.color,
+          };
+        }
+      }
+    });
+  });
+}
+
+// Prevents collisions to the board axis walls
+function collisionAxis(xAxis, yAxis) {
+  const collision = checkCollisionWithBoard(currentPiece.shape, {
+    x: xAxis,
+    y: yAxis,
+  });
+  return collision;
+}
+renderBoard();
+
+// Check collitions
 function checkCollisionWithBoard(pieceShape, position) {
   let collision = false;
 
@@ -291,4 +272,24 @@ function checkCollisionWithBoard(pieceShape, position) {
   });
 
   return collision;
+}
+
+// Checks if the piece goes out of bounds (horizontal or vertical)
+function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
+  let outOfBounds = false;
+
+  pieceShape.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell === 1) {
+        const globalCoord =
+          axis === "x" ? newCoord + colIndex : newCoord + rowIndex;
+
+        if (globalCoord < 0 || globalCoord >= boardLimit) {
+          outOfBounds = true;
+        }
+      }
+    });
+  });
+
+  return outOfBounds;
 }
