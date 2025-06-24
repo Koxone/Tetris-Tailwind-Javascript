@@ -1,22 +1,35 @@
-function calculatePieceOutOfBounds(pieceShape, newX, boardWidth) {
-  let outOfBounds = false;
+case "ArrowLeft":
+        const newXLeft = currentPosition.x - 1;
 
-  pieceShape.forEach((row, rowIndex) => {
-    row.forEach((cell, index) => {
-      if (cell === 1) {
-        const xGlobal = newX + index;
-        if (xGlobal < 0 || xGlobal >= boardWidth) {
-          outOfBounds = true;
+        const outLeft = calculatePieceOutOfBounds(
+          currentPiece.shape,
+          newXLeft,
+          10,
+          "x"
+        );
+
+        const collisionLeft = checkCollisionWithBoard(currentPiece.shape, {
+          x: newXLeft,
+          y: currentPosition.y,
+        });
+
+        if (!outLeft && !collisionLeft) {
+          currentPosition.x = newXLeft;
+          renderBoard();
         }
-      }
-    });
-  });
+        break;
 
-  return outOfBounds;
+
+function collisionAxis(xAxis, yAxis) {
+  const collision = checkCollisionWithBoard(currentPiece.shape, {
+    x: xAxis,
+    y: yAxis,
+  });
+  retu
 }
 
 function movePieceIfValid(axis, newValue, isOutOfBounds) {
-  if (!isOutOfBounds) {
+  if (!isOutOfBounds && !collisionAxis) {
     currentPosition[axis] = newValue;
     renderBoard();
   }
