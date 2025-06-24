@@ -12,7 +12,7 @@ let currentPosition = { x: 3, y: 0 };
 let pieceBlocked = false;
 let gameOver = false;
 let currentPiece = randomPiece();
-startAutoFall();
+// startAutoFall();
 
 // Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
