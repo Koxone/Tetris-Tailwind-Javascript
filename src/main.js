@@ -13,6 +13,8 @@ let pieceBlocked = false;
 let userLoose = false;
 let userWon = false;
 let gameStarted = false;
+let timerInterval = null;
+let startTime = null;
 let counterStarted = false;
 let currentPiece = randomPiece();
 const board = document.getElementById("board");
@@ -23,6 +25,7 @@ const negativeButton = document.getElementById("negative");
 const startGameButton = document.getElementById("start");
 const buttonContainer = document.getElementById("buttonContainer");
 const timer = document.getElementById("timer");
+const music = document.getElementById("music");
 
 // Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
@@ -147,10 +150,15 @@ function startAutoFall() {
 
 // Handles player input to move the piece left, right, or down: Processes keyboard controls
 function userMovement() {
+  const rotateSound = new Audio("/rotate.mp3");
+  const moveSound = new Audio("/move.mp3");
+  const fallSound = new Audio("/fall.mp3");
   window.addEventListener("keydown", (value) => {
     if (pieceBlocked || userLoose || userWon) return;
     switch (value.key) {
       case "ArrowLeft":
+        moveSound.currentTime = 0;
+        moveSound.play();
         const newXLeft = currentPosition.x - 1;
 
         const outLeft = calculatePieceOutOfBounds(
@@ -166,6 +174,8 @@ function userMovement() {
         break;
 
       case "ArrowRight":
+        moveSound.currentTime = 0;
+        moveSound.play();
         const newXRight = currentPosition.x + 1;
 
         const outRight = calculatePieceOutOfBounds(
@@ -181,6 +191,8 @@ function userMovement() {
         break;
 
       case "ArrowDown":
+        fallSound.currentTime = 0;
+        fallSound.play();
         const newY = currentPosition.y + 1;
         const outDown = calculatePieceOutOfBounds(
           currentPiece.shape,
@@ -195,6 +207,8 @@ function userMovement() {
         break;
 
       case "ArrowUp":
+        rotateSound.currentTime = 0;
+        rotateSound.play();
         const rotatedShape = rotateMatrix(currentPiece.shape);
         const outOfBoundsX = calculatePieceOutOfBounds(
           rotatedShape,
@@ -363,11 +377,9 @@ function playAgain() {
   modal.addEventListener("click", handleModalClick);
 }
 
-let timerInterval = null;
-let startTime = null;
-
 function startTimer() {
   const timerElement = document.getElementById("timer");
+  music.play();
   startTime = Date.now();
 
   timerInterval = setInterval(() => {
