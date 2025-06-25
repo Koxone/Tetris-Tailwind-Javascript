@@ -115,6 +115,7 @@ function startAutoFall() {
       pieceBlocked = true;
       clearInterval(fallLoop);
       fixPieceOnBoard();
+      clearCompleteRows();
 
       currentPiece = randomPiece();
       currentPosition = { x: 3, y: 0 };
@@ -277,6 +278,29 @@ function fixPieceOnBoard() {
       }
     });
   });
+}
+
+function clearCompleteRows() {
+  const clearSound = new Audio("/clear.mp3");
+  clearSound.currentTime = 0;
+  clearSound.play();
+  boardState = boardState.filter((row) => {
+    // Si al menos un valor de la fila es 0, se mantiene
+    return row.some((cell) => cell.value === 0);
+  });
+
+  // Cuántas filas se eliminaron
+  const missingRows = 20 - boardState.length;
+
+  // Agregar filas vacías arriba para mantener las 20 filas
+  for (let i = 0; i < missingRows; i++) {
+    boardState.unshift(
+      Array.from({ length: 10 }, () => ({
+        value: 0,
+        color: null,
+      })),
+    );
+  }
 }
 
 // Resets Board and Game State
