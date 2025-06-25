@@ -122,6 +122,7 @@ function startAutoFall() {
 
       if (collisionAtSpawn) {
         userLoose = true;
+        stopTimer();
         playAgain();
         modal.classList.remove("hidden");
         modal.classList.add("flex");
@@ -275,8 +276,11 @@ function resetGame() {
   currentPosition = { x: 3, y: 0 };
   currentPiece = randomPiece();
   pieceBlocked = false;
+  gameStarted = false;
   userLoose = false;
   userWon = false;
+  resetTimer();
+  startTimer();
   renderBoard();
   startAutoFall();
 }
@@ -359,28 +363,43 @@ function playAgain() {
   modal.addEventListener("click", handleModalClick);
 }
 
-function timerHandler() {
-  gameStarted = true;
-  startAutoFall();
-  let seconds = 0;
+let timerInterval = null;
+let startTime = null;
+
+function startTimer() {
   const timerElement = document.getElementById("timer");
+  startTime = Date.now();
 
-  setInterval(() => {
-    seconds++;
+  timerInterval = setInterval(() => {
+    const elapsed = Date.now() - startTime;
 
-    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
-    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
-    const secs = String(seconds % 60).padStart(2, "0");
+    const hrs = String(Math.floor(elapsed / 3600000)).padStart(2, "0");
+    const mins = String(Math.floor((elapsed % 3600000) / 60000)).padStart(
+      2,
+      "0",
+    );
+    const secs = String(Math.floor((elapsed % 60000) / 1000)).padStart(2, "0");
 
     timerElement.textContent = `${hrs}:${mins}:${secs}`;
-  }, 1000);
+  }, 10);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+}
+
+function resetTimer() {
+  stopTimer();
+  const timerElement = document.getElementById("timer");
+  timerElement.textContent = `00:00:00`;
 }
 
 function startGameHandler() {
   startGameButton.addEventListener("click", () => {
     modalNewGame.classList.remove("flex");
     modalNewGame.classList.add("hidden");
-    timerHandler();
+    startAutoFall();
+    startTimer();
   });
 }
 startGameHandler();
