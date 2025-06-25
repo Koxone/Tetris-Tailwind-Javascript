@@ -13,13 +13,16 @@ let pieceBlocked = false;
 let userLoose = false;
 let userWon = false;
 let gameStarted = false;
+let counterStarted = false;
 let currentPiece = randomPiece();
 const board = document.getElementById("board");
 const modal = document.getElementById("modal");
+const modalNewGame = document.getElementById("modalNewGame");
 const positiveButton = document.getElementById("positive");
 const negativeButton = document.getElementById("negative");
+const startGameButton = document.getElementById("start");
 const buttonContainer = document.getElementById("buttonContainer");
-startAutoFall();
+const timer = document.getElementById("timer");
 
 // Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
@@ -90,8 +93,6 @@ function randomPiece() {
 
 // Automatically moves the piece down every second: Handles gravity and piece locking
 function startAutoFall() {
-  if (!gameStarted) return;
-  
   const fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
 
@@ -357,3 +358,29 @@ function playAgain() {
 
   modal.addEventListener("click", handleModalClick);
 }
+
+function timerHandler() {
+  gameStarted = true;
+  startAutoFall();
+  let seconds = 0;
+  const timerElement = document.getElementById("timer");
+
+  setInterval(() => {
+    seconds++;
+
+    const hrs = String(Math.floor(seconds / 3600)).padStart(2, "0");
+    const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+    const secs = String(seconds % 60).padStart(2, "0");
+
+    timerElement.textContent = `${hrs}:${mins}:${secs}`;
+  }, 1000);
+}
+
+function startGameHandler() {
+  startGameButton.addEventListener("click", () => {
+    modalNewGame.classList.remove("flex");
+    modalNewGame.classList.add("hidden");
+    timerHandler();
+  });
+}
+startGameHandler();
