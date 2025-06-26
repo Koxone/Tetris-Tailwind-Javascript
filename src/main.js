@@ -32,6 +32,9 @@ let highScore = Number(localStorage.getItem("highScore")) || 0;
 let level = 0;
 let linesCleared = 0;
 
+let fallSpeed = 1000;
+let fallLoop = null;
+
 function loadHighScoreUI() {
   document.getElementById("highscore").innerText = `${highScore}`;
 }
@@ -106,7 +109,7 @@ function randomPiece() {
 
 // Automatically moves the piece down every second: Handles gravity and piece locking
 function startAutoFall() {
-  const fallLoop = setInterval(() => {
+  fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
 
     const collisionWithBoard = checkCollisionWithBoard(currentPiece.shape, {
@@ -156,7 +159,7 @@ function startAutoFall() {
 
     currentPosition.y = newY;
     renderBoard();
-  }, 1000);
+  }, fallSpeed);
 }
 
 // Handles player input to move the piece left, right, or down: Processes keyboard controls
@@ -311,6 +314,12 @@ function clearCompleteRows() {
 
     if (linesCleared >= (level + 1) * 10) {
       level++;
+      fallSpeed = Math.max(100, fallSpeed - 100);
+      clearInterval(fallLoop);
+      startAutoFall();
+      const levelUpSound = new Audio("/level-up.mp3");
+      levelUpSound.play();
+      alert(`Nivel ${level} alcanzado!`);
     }
   }
 
@@ -371,6 +380,7 @@ function resetGame() {
   score = 0;
   level = 0;
   linesCleared = 0;
+  fallSpeed = 1000;
   document.getElementById("score").innerText = `${score}`;
   document.getElementById("level").innerText = `${level}`;
 }
@@ -491,3 +501,5 @@ function startGameHandler() {
   });
 }
 startGameHandler();
+
+function levelHandler() {}
