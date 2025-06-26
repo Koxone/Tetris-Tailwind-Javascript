@@ -9,33 +9,59 @@
     <meta name="apple-mobile-web-app-title" content="Tetris" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <title>Tetris</title>
   </head>
   <body
     class="flex min-h-screen items-center justify-center gap-3 overflow-hidden bg-gray-900 p-4"
   >
     <div class="flex gap-3">
-      <div
-        class="h-fit w-[260px] self-center overflow-hidden rounded-md border border-black shadow-md"
-      >
+      <div class="flex flex-col gap-4 self-center">
         <div
-          class="bg-gradient-to-b from-gray-800 via-gray-700 to-blue-900 p-3"
+          class="h-fit w-[260px] self-center overflow-hidden rounded-md border border-black shadow-md"
         >
-          <h2
-            class="text-right text-sm font-extrabold tracking-widest text-white uppercase drop-shadow-sm"
+          <div
+            class="bg-gradient-to-b from-gray-800 via-gray-700 to-blue-900 p-3"
           >
-            time
-          </h2>
+            <h2
+              class="text-right text-sm font-extrabold tracking-widest text-white uppercase drop-shadow-sm"
+            >
+              level
+            </h2>
+          </div>
+          <div class="bg-gradient-to-b from-blue-200 to-blue-600 px-3 py-2">
+            <div
+              id="level"
+              class="block w-full text-right text-2xl font-extrabold tracking-wide text-white drop-shadow-sm [text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]"
+            >
+              0
+            </div>
+          </div>
         </div>
-        <div class="bg-gradient-to-b from-blue-200 to-blue-600 px-3 py-2">
-          <time
-            id="timer"
-            aria-label="current-time"
-            class="block w-full text-right text-2xl font-extrabold tracking-wide text-white drop-shadow-sm [text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]"
+        <div
+          class="h-fit w-[260px] self-center overflow-hidden rounded-md border border-black shadow-md"
+        >
+          <div
+            class="bg-gradient-to-b from-gray-800 via-gray-700 to-blue-900 p-3"
           >
-            00:00:00
-          </time>
+            <h2
+              class="text-right text-sm font-extrabold tracking-widest text-white uppercase drop-shadow-sm"
+            >
+              time
+            </h2>
+          </div>
+          <div class="bg-gradient-to-b from-blue-200 to-blue-600 px-3 py-2">
+            <time
+              id="timer"
+              aria-label="current-time"
+              class="block w-full text-right text-2xl font-extrabold tracking-wide text-white drop-shadow-sm [text-shadow:_-1px_-1px_0_#000,_1px_-1px_0_#000,_-1px_1px_0_#000,_1px_1px_0_#000]"
+            >
+              00:00:00
+            </time>
+          </div>
         </div>
       </div>
       <main

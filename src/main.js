@@ -282,8 +282,6 @@ function fixPieceOnBoard() {
 
 function clearCompleteRows() {
   const clearSound = new Audio("/clear.mp3");
-  clearSound.currentTime = 0;
-  clearSound.play();
   boardState = boardState.filter((row) => {
     // Si al menos un valor de la fila es 0, se mantiene
     return row.some((cell) => cell.value === 0);
