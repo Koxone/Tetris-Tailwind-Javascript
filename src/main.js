@@ -16,7 +16,9 @@ let gameStarted = false;
 let timerInterval = null;
 let startTime = null;
 let counterStarted = false;
-let currentPiece = randomPiece();
+let pieceBag = [];
+refillBag();
+let currentPiece = getNextPiece();
 const board = document.getElementById("board");
 const modal = document.getElementById("modal");
 const modalNewGame = document.getElementById("modalNewGame");
@@ -99,12 +101,24 @@ function renderBoard() {
 }
 
 // Returns a random piece from the TETROMINOES list: Selects a random tetromino
-function randomPiece() {
-  const pieces = Object.keys(TETROMINOES);
-  const randomIndex = Math.floor(Math.random() * pieces.length);
-  const randomKey = pieces[randomIndex];
-  const piece = TETROMINOES[randomKey];
-  return piece;
+function refillBag() {
+  const allPieces = Object.keys(TETROMINOES);
+
+  // Fisher-Yates Shuffle
+  for (let i = allPieces.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allPieces[i], allPieces[j]] = [allPieces[j], allPieces[i]];
+  }
+
+  pieceBag = allPieces;
+}
+
+function getNextPiece() {
+  if (pieceBag.length === 0) {
+    refillBag();
+  }
+  const nextKey = pieceBag.shift();
+  return TETROMINOES[nextKey];
 }
 
 // Automatically moves the piece down every second: Handles gravity and piece locking
@@ -130,7 +144,7 @@ function startAutoFall() {
       fixPieceOnBoard();
       clearCompleteRows();
 
-      currentPiece = randomPiece();
+      currentPiece = getNextPiece();
       currentPosition = { x: 3, y: 0 };
       const collisionAtSpawn = checkCollisionWithBoard(
         currentPiece.shape,
@@ -368,7 +382,7 @@ function resetGame() {
     })),
   );
   currentPosition = { x: 3, y: 0 };
-  currentPiece = randomPiece();
+  currentPiece = getNextPiece();
   pieceBlocked = false;
   gameStarted = false;
   userLoose = false;
@@ -501,5 +515,3 @@ function startGameHandler() {
   });
 }
 startGameHandler();
-
-function levelHandler() {}
