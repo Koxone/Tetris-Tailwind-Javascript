@@ -27,6 +27,16 @@ const buttonContainer = document.getElementById("buttonContainer");
 const timer = document.getElementById("timer");
 const music = document.getElementById("music");
 
+let score = 0;
+let highScore = Number(localStorage.getItem("highScore")) || 0;
+let level = 0;
+let linesCleared = 0;
+
+function loadHighScoreUI() {
+  document.getElementById("highscore").innerText = `${highScore}`;
+}
+loadHighScoreUI();
+
 // Generates and renders the empty board at the start of the game: Creates the initial grid with alternating colors
 function renderEmptyBoard() {
   board.innerHTML = "";
@@ -282,6 +292,33 @@ function fixPieceOnBoard() {
 
 function clearCompleteRows() {
   const clearSound = new Audio("/clear.mp3");
+
+  const completedRows = boardState.filter((row) =>
+    row.every((cell) => cell.value !== 0),
+  );
+
+  if (completedRows.length > 0) {
+    const pointsTable = {
+      1: 40,
+      2: 100,
+      3: 300,
+      4: 1200,
+    };
+    const gained = (pointsTable[completedRows.length] || 0) * (level + 1);
+    score += gained;
+    highestScore();
+    linesCleared += completedRows.length;
+
+    if (linesCleared >= (level + 1) * 10) {
+      level++;
+    }
+  }
+
+  if (completedRows.length > 0) {
+    clearSound.currentTime = 0;
+    clearSound.play();
+  }
+
   boardState = boardState.filter((row) => {
     // Si al menos un valor de la fila es 0, se mantiene
     return row.some((cell) => cell.value === 0);
@@ -299,10 +336,22 @@ function clearCompleteRows() {
       })),
     );
   }
+
+  document.getElementById("score").innerText = `${score}`;
+  document.getElementById("level").innerText = `${level}`;
+}
+
+function highestScore() {
+  if (score > highScore) {
+    highScore = score;
+    document.getElementById("highscore").innerText = `${highScore}`;
+    localStorage.setItem("highScore", score);
+  }
 }
 
 // Resets Board and Game State
 function resetGame() {
+  localStorage.setItem("score", score);
   boardState = Array.from({ length: 20 }, () =>
     Array.from({ length: 10 }, () => ({
       value: 0,
@@ -319,6 +368,11 @@ function resetGame() {
   startTimer();
   renderBoard();
   startAutoFall();
+  score = 0;
+  level = 0;
+  linesCleared = 0;
+  document.getElementById("score").innerText = `${score}`;
+  document.getElementById("level").innerText = `${level}`;
 }
 
 // Prevents collisions to the board axis walls: Checks for collisions on movement
