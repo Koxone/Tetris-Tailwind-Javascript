@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
 
-    <!-- Favicon & PWA -->
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -11,7 +10,6 @@
     <meta name="apple-mobile-web-app-title" content="Tetris" />
     <link rel="manifest" href="/site.webmanifest" />
 
-    <!-- Viewport & font -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap"
@@ -24,9 +22,7 @@
     class="flex min-h-screen items-center justify-center gap-6 overflow-hidden bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 p-6 font-sans text-white antialiased"
   >
     <div class="flex gap-6">
-      <!-- ─────────────────────── Left info panel -->
       <aside class="flex flex-col gap-6 self-center">
-        <!-- Level Card -->
         <section
           class="w-[260px] rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800/90 to-slate-900/90 shadow-2xl backdrop-blur-md"
         >
@@ -50,7 +46,6 @@
           </div>
         </section>
 
-        <!-- Time Card -->
         <section
           class="w-[260px] rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800/90 to-slate-900/90 shadow-2xl backdrop-blur-md"
         >
@@ -76,11 +71,9 @@
         </section>
       </aside>
 
-      <!-- ─────────────────────── Game board -->
       <main
         class="relative h-[calc(100vh-4rem)] min-h-[500px] w-full max-w-[400px] rounded-3xl border border-slate-600/40 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-3 shadow-2xl backdrop-blur-md sm:h-[800px] sm:w-[400px] sm:p-6"
       >
-        <!-- Modal: Welcome -->
         <section
           id="modalNewGame"
           class="absolute top-1/2 left-1/2 z-50 flex w-[280px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-8 rounded-3xl border border-violet-500/40 bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-purple-900/95 p-6 shadow-2xl backdrop-blur-xl"
@@ -98,7 +91,6 @@
           </button>
         </section>
 
-        <!-- Modal: Game Over -->
         <section
           id="modal"
           class="absolute top-1/2 left-1/2 z-50 hidden w-[280px] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-8 rounded-3xl border border-red-500/40 bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-red-900/95 p-6 shadow-2xl backdrop-blur-xl"
@@ -124,7 +116,6 @@
           </div>
         </section>
 
-        <!-- Board wrapper -->
         <div
           class="h-full w-full rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-900 to-black p-[3px] shadow-inner sm:p-[6px]"
         >
@@ -135,9 +126,7 @@
         </div>
       </main>
 
-      <!-- ─────────────────────── Right info panel -->
       <aside class="flex flex-col gap-6 self-center">
-        <!-- High Score -->
         <section
           class="w-[260px] rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800/90 to-slate-900/90 shadow-2xl backdrop-blur-md"
         >
@@ -161,7 +150,6 @@
           </div>
         </section>
 
-        <!-- Score -->
         <section
           class="w-[260px] rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800/90 to-slate-900/90 shadow-2xl backdrop-blur-md"
         >
@@ -187,7 +175,6 @@
       </aside>
     </div>
 
-    <!-- Music -->
     <audio id="music" loop src="/theme.mp3"></audio>
     <script type="module" src="/src/main.js"></script>
   </body>
