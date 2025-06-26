@@ -1,7 +1,7 @@
 import { TETROMINOES } from "./utils/tetrominoes";
 import "/style.css";
 
-/* 🔧 Variables globales necesarias para todo el juego */
+// Global variables needed for the whole game
 let boardState = Array.from({ length: 20 }, () =>
   Array.from({ length: 10 }, () => ({
     value: 0,
@@ -25,7 +25,7 @@ let level = 0;
 let linesCleared = 0;
 let fallSpeed = 1000;
 
-/* 🎮 Elementos del DOM */
+// DOM elements
 const board = document.getElementById("board");
 const modal = document.getElementById("modal");
 const modalNewGame = document.getElementById("modalNewGame");
@@ -43,12 +43,12 @@ renderBoard();
 userMovement();
 startGameHandler();
 
-/* 🏆 Cargar el highscore inicial al UI */
+// Load initial highscore to UI
 function loadHighScoreUI() {
   document.getElementById("highscore").innerText = `${highScore}`;
 }
 
-/* 🧱 Renderizar tablero vacío al comenzar el juego */
+// Render empty board at game start
 function renderEmptyBoard() {
   board.innerHTML = "";
   Array.from({ length: 20 }).forEach((_, row) => {
@@ -62,7 +62,7 @@ function renderEmptyBoard() {
   });
 }
 
-/* 🎨 Renderizar tablero completo (bloques fijos + pieza actual) */
+// Render full board (fixed blocks + current piece)
 function renderBoard() {
   board.innerHTML = "";
   Array.from({ length: 20 }).forEach((_, row) => {
@@ -100,7 +100,7 @@ function renderBoard() {
   });
 }
 
-/* 🔄 Rellenar bolsa de piezas usando algoritmo Fisher-Yates */
+// Fill piece bag using Fisher-Yates algorithm
 function refillBag() {
   const allPieces = Object.keys(TETROMINOES);
   for (let i = allPieces.length - 1; i > 0; i--) {
@@ -110,7 +110,7 @@ function refillBag() {
   pieceBag = allPieces;
 }
 
-/* ➕ Obtener siguiente pieza del 7-bag */
+// Get next piece from 7-bag
 function getNextPiece() {
   if (pieceBag.length === 0) {
     refillBag();
@@ -119,7 +119,7 @@ function getNextPiece() {
   return TETROMINOES[nextKey];
 }
 
-/* ⬇️ Iniciar caída automática */
+// Start automatic falling
 function startAutoFall() {
   fallLoop = setInterval(() => {
     const newY = currentPosition.y + 1;
@@ -168,7 +168,7 @@ function startAutoFall() {
   }, fallSpeed);
 }
 
-/* 🎮 Manejar entradas del jugador */
+// Handle player input
 function userMovement() {
   const rotateSound = new Audio("/rotate.mp3");
   const moveSound = new Audio("/move.mp3");
@@ -249,7 +249,7 @@ function userMovement() {
   });
 }
 
-/* ✅ Mover pieza si es válido */
+// Move piece if valid
 function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
   if (!isOutOfBounds && !isCollision) {
     currentPosition[axis] = newValue;
@@ -257,7 +257,7 @@ function movePieceIfValid(axis, newValue, isOutOfBounds, isCollision) {
   }
 }
 
-/* 🔁 Rotar pieza en sentido horario */
+// Rotate piece clockwise
 function rotateMatrix(matrix) {
   const size = matrix.length;
   const rotated = Array.from({ length: size }, () => Array(size).fill(0));
@@ -269,7 +269,7 @@ function rotateMatrix(matrix) {
   return rotated;
 }
 
-/* 🧱 Fijar pieza en el tablero */
+// Fix piece on the board
 function fixPieceOnBoard() {
   currentPiece.shape.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
@@ -287,7 +287,7 @@ function fixPieceOnBoard() {
   });
 }
 
-/* ✂️ Eliminar filas completas */
+// Remove complete rows
 function clearCompleteRows() {
   const clearSound = new Audio("/clear.mp3");
   const completedRows = boardState.filter((row) =>
@@ -308,7 +308,7 @@ function clearCompleteRows() {
       startAutoFall();
       const levelUpSound = new Audio("/level-up.mp3");
       levelUpSound.play();
-      alert(`Nivel ${level} alcanzado!`);
+      alert(`Level ${level} reached!`);
     }
 
     clearSound.currentTime = 0;
@@ -326,7 +326,7 @@ function clearCompleteRows() {
   document.getElementById("level").innerText = `${level}`;
 }
 
-/* 🏅 Verificar y actualizar récord */
+// Check and update highscore
 function highestScore() {
   if (score > highScore) {
     highScore = score;
@@ -335,7 +335,7 @@ function highestScore() {
   }
 }
 
-/* 🔁 Reiniciar juego completamente */
+// Completely reset the game
 function resetGame() {
   localStorage.setItem("score", score);
   boardState = Array.from({ length: 20 }, () =>
@@ -359,12 +359,12 @@ function resetGame() {
   document.getElementById("level").innerText = `${level}`;
 }
 
-/* 🔍 Verificar colisión con eje */
+// Check collision on axis
 function collisionAxis(xAxis, yAxis) {
   return checkCollisionWithBoard(currentPiece.shape, { x: xAxis, y: yAxis });
 }
 
-/* 🧱 Verificar colisión pieza-tablero */
+// Check collision between piece and board
 function checkCollisionWithBoard(pieceShape, position) {
   return pieceShape.some((row, rowIndex) =>
     row.some((cell, columnIndex) => {
@@ -378,7 +378,7 @@ function checkCollisionWithBoard(pieceShape, position) {
   );
 }
 
-/* 📏 Calcular si una pieza se sale del tablero */
+// Calculate if a piece is out of board bounds
 function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
   return pieceShape.some((row, rowIndex) =>
     row.some((cell, colIndex) => {
@@ -390,7 +390,7 @@ function calculatePieceOutOfBounds(pieceShape, newCoord, boardLimit, axis) {
   );
 }
 
-/* 🔁 Mostrar modal de juego terminado */
+// Show game over modal
 function playAgain() {
   if (!userLoose && !userWon) return;
 
@@ -410,7 +410,7 @@ function playAgain() {
   modal.addEventListener("click", handleModalClick);
 }
 
-/* ⏱️ Iniciar temporizador */
+// Start timer
 function startTimer() {
   music.play();
   startTime = Date.now();
@@ -426,18 +426,18 @@ function startTimer() {
   }, 10);
 }
 
-/* ⛔ Detener temporizador */
+// Stop timer
 function stopTimer() {
   clearInterval(timerInterval);
 }
 
-/* 🔄 Reiniciar temporizador */
+// Reset timer
 function resetTimer() {
   stopTimer();
   timer.textContent = `00:00:00`;
 }
 
-/* ▶️ Manejar botón de iniciar juego */
+// Handle start game button
 function startGameHandler() {
   startGameButton.addEventListener("click", () => {
     modalNewGame.classList.remove("flex");
