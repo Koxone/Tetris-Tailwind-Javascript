@@ -8,32 +8,42 @@ let boardState = Array.from({ length: 20 }, () =>
     color: null,
   })),
 );
-let currentPosition = { x: 3, y: 0 };
+
+type Position = {
+  x: number;
+  y: number
+}
+
+let currentPosition: Position = { x: 3, y: 0 };
 let currentPiece;
 let pieceBag = [];
-let pieceBlocked = false;
-let userLoose = false;
-let userWon = false;
-let gameStarted = false;
+let pieceBlocked: boolean = false;
+let userLoose: boolean = false;
+let userWon: boolean = false;
+let gameStarted: boolean = false;
 let timerInterval = null;
 let startTime = null;
-let counterStarted = false;
+let counterStarted: boolean = false;
 let fallLoop = null;
-let score = 0;
+let score: number = 0;
 let highScore = Number(localStorage.getItem("highScore")) || 0;
-let level = 0;
-let linesCleared = 0;
-let fallSpeed = 1000;
+let level: number = 0;
+let linesCleared: number = 0;
+let fallSpeed: number = 1000;
 
 /* DOM elements */
-const board = document.getElementById("board");
-const modal = document.getElementById("modal");
-const modalNewGame = document.getElementById("modalNewGame");
-const positiveButton = document.getElementById("positive");
-const negativeButton = document.getElementById("negative");
-const startGameButton = document.getElementById("start");
-const timer = document.getElementById("timer");
-const music = document.getElementById("music");
+const board = document.getElementById("board") as HTMLDivElement | null;
+
+const modal = document.getElementById("modal") as HTMLElement | null;
+const modalNewGame = document.getElementById("modalNewGame") as HTMLElement | null;
+
+const positiveButton = document.getElementById("positive") as HTMLButtonElement | null;
+const negativeButton = document.getElementById("negative") as HTMLButtonElement | null;
+const startGameButton = document.getElementById("start") as HTMLButtonElement | null;
+
+const timer = document.getElementById("timer") as HTMLTimeElement | null;
+
+const music = document.getElementById("music") as HTMLAudioElement | null;
 
 refillBag();
 currentPiece = getNextPiece();
@@ -45,11 +55,16 @@ startGameHandler();
 
 /* Load initial highscore to UI */
 function loadHighScoreUI() {
-  document.getElementById("highscore").innerText = `${highScore}`;
+  const highScoreElement = document.getElementById("highscore") as HTMLOutputElement | null;
+  if (highScoreElement) {
+    highScoreElement.value = String(highScore); 
+  }
 }
+
 
 /* Render empty board at game start */
 function renderEmptyBoard() {
+  if (!board) return
   board.innerHTML = "";
   Array.from({ length: 20 }).forEach((_, row) => {
     Array.from({ length: 10 }).forEach((_, column) => {
@@ -64,11 +79,12 @@ function renderEmptyBoard() {
 
 /* Render full board (fixed blocks + current piece) */
 function renderBoard() {
+  if (!board) return
   board.innerHTML = "";
   Array.from({ length: 20 }).forEach((_, row) => {
     Array.from({ length: 10 }).forEach((_, column) => {
-      let paintThisCell = false;
-      let color = "";
+      let paintThisCell: boolean = false;
+      let color: string | null = null;
 
       if (boardState[row][column].value === 1) {
         paintThisCell = true;
